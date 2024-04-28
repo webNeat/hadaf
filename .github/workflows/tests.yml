@@ -10,8 +10,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - run: npm ci
+      - run: npm i
       - run: npm run build --workspace=packages/syntax
       - run: npm run build --workspace=packages/core
-      - run: npm run build --workspace=packages/vscode
       - run: npm test --workspaces
+      - run: npm i
+        working-directory: extensions/vscode
+      - run: npm run build
+        working-directory: extensions/vscode
+      - run: npm test
+        working-directory: extensions/vscode

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Hadaf",
+  "patterns": [
+    {
+      "include": "#tags"
+    }
+  ],
+  "repository": {
+    "tags": {
+      "patterns": [
+        {
+          "name": "keyword.hadaf",
+          "match": "^[^\\s:]+:"
+        },
+        {
+          "name": "comment.line.hadaf",
+          "match": "\\s@[^\\s:]+"
+        },
+        {
+          "name": "comment.line.hadaf",
+          "match": "^\\s*---\\s*$"
+        },
+        {
+          "name": "keyword.hadaf",
+          "match": "(?<=\\s@[^\\s:=<>]+)(=|<|>)"
+        },
+        {
+          "name": "comment.line.hadaf",
+          "match": "(?<=\\s@[^\\s:=<>]+):"
+        },
+        {
+          "name": "string.quoted.single.hadaf",
+          "match": "(?<=\\s@[^\\s:=<>]+(:|=|<|>))[^\\s]+"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.hadaf"
+}

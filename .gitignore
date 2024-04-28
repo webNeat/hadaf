@@ -1,0 +1,11 @@
+coverage
+node_modules
+dist
+build
+
+.DS_Store
+*.pem
+npm-debug.log*
+.env
+
+tasks.todo

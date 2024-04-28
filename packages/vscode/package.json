@@ -1,0 +1,55 @@
+{
+  "name": "@hadaf/extension",
+  "displayName": "Hadaf",
+  "description": "A task management tool to acheive your goals",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "hadaf",
+        "aliases": [
+          "Hadaf",
+          "hadaf"
+        ],
+        "extensions": [
+          ".hadaf"
+        ],
+        "configuration": "./files/language.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "hadaf",
+        "scopeName": "source.hadaf",
+        "path": "./files/grammar.json"
+      }
+    ],
+    "commands": []
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run build",
+    "build": "tsc",
+    "watch": "tsc -watch",
+    "pretest": "yarn run build",
+    "test": "echo 'No tests yet!'"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0",
+    "@hadaf/syntax": "^0.0.1",
+    "@hadaf/core": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.1",
+    "@types/vscode": "^1.80.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  }
+}

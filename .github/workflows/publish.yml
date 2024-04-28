@@ -19,6 +19,8 @@ jobs:
           tag_name: "syntax-v%s"
           tag_message: "syntax-v%s"
           commit_pattern: "^Release syntax (\\S+)"
+          publish_command: npm
+          publish_args: --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -39,6 +41,7 @@ jobs:
           tag_name: "core-v%s"
           tag_message: "core-v%s"
           commit_pattern: "^Release core (\\S+)"
+          publish_command: npm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

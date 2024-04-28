@@ -1,0 +1,7 @@
+out
+dist
+lab
+node_modules
+.vscode-test/
+*.vsix
+tasks.todo

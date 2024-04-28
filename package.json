@@ -1,0 +1,8 @@
+{
+  "name": "hadaf",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

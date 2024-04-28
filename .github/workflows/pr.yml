@@ -1,0 +1,41 @@
+name: PR checks
+on:
+  pull_request:
+    branches: ['main']
+jobs:
+  test-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build --workspace=packages/syntax
+      - run: npm run build --workspace=packages/core
+      - run: npm run build --workspace=packages/vscode
+      - run: npm test --workspace=packages/syntax
+  test-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build --workspace=packages/syntax
+      - run: npm run build --workspace=packages/core
+      - run: npm run build --workspace=packages/vscode
+      - run: npm test --workspace=packages/core
+  test-vscode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build --workspace=packages/syntax
+      - run: npm run build --workspace=packages/core
+      - run: npm run build --workspace=packages/vscode
+      - run: npm test --workspace=packages/vscode

@@ -2,7 +2,7 @@
   "name": "hadaf-vscode",
   "displayName": "Hadaf",
   "description": "A task management tool to acheive your goals",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "webneat",
   "engines": {
     "vscode": "^1.80.0"
@@ -54,8 +54,8 @@
     "test": "echo 'No tests yet!'"
   },
   "dependencies": {
-    "@hadaf/core": "^0.0.1",
-    "@hadaf/syntax": "^0.0.1",
+    "@hadaf/core": "^0.0.2",
+    "@hadaf/syntax": "^0.0.2",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

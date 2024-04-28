@@ -15,6 +15,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "bash ./build.sh",
     "test": "node --import tsx --enable-source-maps tests/run.ts",

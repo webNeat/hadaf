@@ -1,14 +1,26 @@
 {
-  "name": "@hadaf/extension",
+  "name": "hadaf-vscode",
   "displayName": "Hadaf",
   "description": "A task management tool to acheive your goals",
   "version": "0.0.1",
+  "publisher": "webneat",
   "engines": {
     "vscode": "^1.80.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webNeat/hadaf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webNeat/hadaf/issues"
   },
   "categories": [
     "Other"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -35,21 +47,22 @@
     "commands": []
   },
   "scripts": {
-    "vscode:prepublish": "yarn run build",
+    "vscode:prepublish": "npm run build",
     "build": "tsc",
     "watch": "tsc -watch",
-    "pretest": "yarn run build",
+    "pretest": "npm run build",
     "test": "echo 'No tests yet!'"
   },
   "dependencies": {
-    "vscode-languageclient": "^8.1.0",
+    "@hadaf/core": "^0.0.1",
     "@hadaf/syntax": "^0.0.1",
-    "@hadaf/core": "^0.0.1"
+    "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
     "@types/vscode": "^1.80.0",
     "prettier": "^3.0.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vsce": "^2.15.0"
   }
 }

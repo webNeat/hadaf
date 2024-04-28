@@ -52,13 +52,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm run build --workspace=packages/syntax
-      - run: npm run build --workspace=packages/core
-      - run: npm run build --workspace=packages/vscode
+      - run: cd extensions/vscode && npm ci
+      - run: cd extensions/vscode && npm run build
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+          packagePath: extensions/vscode
           registryUrl: https://marketplace.visualstudio.com
           skipDuplicate: true

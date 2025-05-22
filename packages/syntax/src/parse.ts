@@ -9,15 +9,24 @@ export function parse(text: string): Document {
   const levels = [{ indentation: 0, items }]
   while (!reader.isEnd()) {
     const indentation = reader.readMany(...tokens.spaces).length
+    const description = parseDescription(reader)
     const item = parseItem(reader)
-    if (item) {
-      while (indentation < last(levels).indentation) levels.pop()
+    if (item || description) {
       if (indentation > last(levels).indentation) {
         const lastItem = last(last(levels).items)
         levels.push({ indentation, items: lastItem.items })
         reader.readOne(...tokens.new_line)
       }
+      while (indentation < last(levels).indentation) levels.pop()
       if (item) last(levels).items.push(item)
+      if (description) {
+        const lastItem = last(last(levels).items)
+        if (lastItem.description) {
+          lastItem.description += '\n' + description
+        } else {
+          lastItem.description = description
+        }
+      }
     }
     reader.readOne(...tokens.new_line)
   }
@@ -29,8 +38,15 @@ function parseItem(reader: Reader): Item | null {
   const text = parseText(reader)
   const tags = parseTags(reader)
   const items: Item[] = []
+  const description = ''
   if (title === '' && text === '' && tags.length === 0) return null
-  return { title, text, tags, items }
+  return { title, text, tags, items, description }
+}
+
+function parseDescription(reader: Reader) {
+  if (!reader.peekOne(tokens.description_prefix)) return ''
+  reader.read(tokens.description_prefix.length)
+  return reader.readUntil(...tokens.new_line)
 }
 
 function parseTitle(reader: Reader) {

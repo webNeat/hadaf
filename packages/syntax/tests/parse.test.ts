@@ -28,6 +28,7 @@ test.group('parse', (group) => {
         text: '',
         tags: [],
         items: [],
+        description: '',
       },
     ]
     expect(parse(text)).toEqual(result)
@@ -41,6 +42,7 @@ test.group('parse', (group) => {
         text,
         tags: [],
         items: [],
+        description: '',
       },
     ]
     expect(parse(text)).toEqual(result)
@@ -52,6 +54,7 @@ test.group('parse', (group) => {
       {
         title: '',
         text: '',
+        description: '',
         tags: [
           {
             name: 'project',
@@ -76,6 +79,7 @@ test.group('parse', (group) => {
       {
         title: 'hadaf.syntax',
         text: '',
+        description: '',
         tags: [
           {
             name: 'deadline',
@@ -100,6 +104,7 @@ test.group('parse', (group) => {
       {
         title: '',
         text: 'Implement the hadaf syntax library',
+        description: '',
         tags: [
           {
             name: 'project',
@@ -124,17 +129,20 @@ test.group('parse', (group) => {
       {
         title: '',
         text: 'Implement the hadaf syntax library',
+        description: '',
         tags: [],
         items: [
           {
             title: '',
             text: 'Write the `parse` function',
+            description: '',
             tags: [],
             items: [],
           },
           {
             title: '',
             text: 'Write the `stringify` function',
+            description: '',
             tags: [],
             items: [],
           },
@@ -151,6 +159,7 @@ test.group('parse', (group) => {
       {
         title: '',
         text: 'Implement the hadaf syntax library',
+        description: '',
         tags: [
           {
             name: 'project',
@@ -162,6 +171,7 @@ test.group('parse', (group) => {
           {
             title: '',
             text: 'Write the `parse` function',
+            description: '',
             tags: [
               {
                 name: 'estimation',
@@ -174,6 +184,7 @@ test.group('parse', (group) => {
           {
             title: '',
             text: 'Write the `stringify` function',
+            description: '',
             tags: [
               {
                 name: 'estimation',
@@ -200,11 +211,13 @@ test.group('parse', (group) => {
       {
         title: 'hadaf.syntax',
         text: '',
+        description: '',
         tags: [],
         items: [
           {
             title: '',
             text: 'Implement the hadaf syntax library',
+            description: '',
             tags: [
               {
                 name: 'coding',
@@ -216,6 +229,7 @@ test.group('parse', (group) => {
               {
                 title: '',
                 text: 'Write the parse function',
+                description: '',
                 tags: [
                   {
                     name: 'code-parsing',
@@ -228,6 +242,7 @@ test.group('parse', (group) => {
               {
                 title: '',
                 text: 'Write the stringify function',
+                description: '',
                 tags: [
                   {
                     name: 'code-parsing',
@@ -242,6 +257,7 @@ test.group('parse', (group) => {
           {
             title: '',
             text: 'Test that stuff',
+            description: '',
             tags: [
               {
                 name: 'testing',
@@ -263,6 +279,7 @@ test.group('parse', (group) => {
       {
         title: '',
         text: 'All tag types',
+        description: '',
         tags: [
           { name: 'flag', type: 'boolean', value: true },
           { name: 'unwanted', type: 'boolean', value: false },

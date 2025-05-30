@@ -8,4 +8,5 @@ build
 npm-debug.log*
 .env
 
+archive
 tasks.todo

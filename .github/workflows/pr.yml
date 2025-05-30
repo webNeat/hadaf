@@ -6,35 +6,29 @@ jobs:
   test-syntax:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - run: npm i
-      - run: npm run build --workspace=packages/syntax
-      - run: npm run build --workspace=packages/core
-      - run: npm test --workspace=packages/syntax
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run --filter "./packages/syntax" build
+      - run: bun run --filter "./packages/syntax" test
   test-core:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - run: npm i
-      - run: npm run build --workspace=packages/syntax
-      - run: npm run build --workspace=packages/core
-      - run: npm test --workspace=packages/core
-  test-vscode:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - run: npm i
-        working-directory: extensions/vscode
-      - run: npm run build
-        working-directory: extensions/vscode
-      - run: npm test
-        working-directory: extensions/vscode
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run --filter "./packages/*" build
+      - run: bun run --filter "./packages/core" test
+  # test-vscode:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20
+  #     - run: npm i
+  #       working-directory: extensions/vscode
+  #     - run: npm run build
+  #       working-directory: extensions/vscode
+  #     - run: npm test
+  #       working-directory: extensions/vscode

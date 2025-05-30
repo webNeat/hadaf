@@ -1,8 +1,7 @@
-import fs, { readFile } from 'fs/promises'
-import { test } from '@japa/runner'
+import dedent from 'dedent'
+import { afterEach, describe, expect, test } from 'bun:test'
 import { parse, stringify } from '@hadaf/syntax'
 import { createHandler } from '../../src/index.js'
-import { unindent } from './utils.js'
 
 type TestCase = {
   data: string
@@ -13,10 +12,9 @@ type TestCase = {
 
 const dbPath = 'tests/db.json'
 
-test.group('acceptance > handle: when the input string is empty', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: when the input string is empty', () => {
+  afterEach(() => Bun.file(dbPath).delete())
+
   testCase('it returns empty string when the db is empty', {
     data: '',
     input: '',
@@ -26,35 +24,33 @@ test.group('acceptance > handle: when the input string is empty', (group) => {
     data: `
       A task without title nor tags @id:1
       test_title: A task with title but no tags @id:2
-      A task without title but with tags @id:3 @fun @deadline:15/04/2024 @est:1h15m
+      A task without title but with tags @id:3 @fun:true @deadline:15/04/2024 @est:1h15m
     `,
     input: '',
     output: `
       A task without title nor tags @id:1
       test_title: A task with title but no tags @id:2
-      A task without title but with tags @id:3 @fun @deadline:15/04/2024 @est:1h15m
+      A task without title but with tags @id:3 @fun:true @deadline:15/04/2024 @est:1h15m
     `,
     stableOutput: true,
   })
 })
 
-test.group('acceptance > handle: when the input string contains only items', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: when the input string contains only items', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it inserts new items', {
     data: `An already existing task @id:1 @test`,
     input: `A new task @new`,
     output: `
-      An already existing task @id:1 @test
-      A new task @id:2 @new
+      An already existing task @id:1 @test:true
+      A new task @id:2 @new:true
     `,
     stableOutput: true,
   })
   testCase('it updates existing items', {
     data: `An already existing task @id:1 @test`,
     input: `Updating the already existing task @id:1 @updated`,
-    output: `Updating the already existing task @id:1 @updated`,
+    output: `Updating the already existing task @id:1 @updated:true`,
   })
   testCase('it deletes items with @delete tag', {
     data: `An already existing task @id:1 @test`,
@@ -63,8 +59,8 @@ test.group('acceptance > handle: when the input string contains only items', (gr
   })
   testCase('overrides tags with the same name with the last one', {
     data: `An already existing task @id:1 @project:test @fun`,
-    input: `An already existing task @id:1 @project:test @fun @project:demo`,
-    output: `An already existing task @id:1 @project:demo @fun`,
+    input: `An already existing task @id:1 @project:test @fun:true @project:demo`,
+    output: `An already existing task @id:1 @project:demo @fun:true`,
   })
   testCase('it adds tasks and subtasks', {
     data: '',
@@ -133,14 +129,12 @@ test.group('acceptance > handle: when the input string contains only items', (gr
   })
 })
 
-test.group('acceptance > handle: sort', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: sort', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it sorts items ASC with one tag', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -151,17 +145,17 @@ test.group('acceptance > handle: sort', (group) => {
     output: `
       sort: @duration:asc
       ---
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
       Task 4 @id:4 @project:demo @duration:30m
-      Task 1 @id:1 @fun @duration:1h
+      Task 1 @id:1 @fun:true @duration:1h
       Task 3 @id:3 @project:other
     `,
     stableOutput: true,
   })
   testCase('it sorts items DESC with one tag', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -172,17 +166,17 @@ test.group('acceptance > handle: sort', (group) => {
     output: `
       sort: @duration:desc
       ---
-      Task 1 @id:1 @fun @duration:1h
+      Task 1 @id:1 @fun:true @duration:1h
       Task 4 @id:4 @project:demo @duration:30m
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
     `,
     stableOutput: true,
   })
   testCase('it sorts items with multiple tags', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
       Task 5 @id:5 @duration:25m
@@ -196,24 +190,22 @@ test.group('acceptance > handle: sort', (group) => {
       sort: @duration:asc @id:desc
       ---
       Task 5 @id:5 @duration:25m
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
       Task 6 @id:6 @duration:30m
       Task 4 @id:4 @project:demo @duration:30m
-      Task 1 @id:1 @fun @duration:1h
+      Task 1 @id:1 @fun:true @duration:1h
       Task 3 @id:3 @project:other
     `,
     stableOutput: true,
   })
 })
 
-test.group('acceptance > handle: filter', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: filter', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('@tag:value => where tag equals value', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -230,8 +222,8 @@ test.group('acceptance > handle: filter', (group) => {
   })
   testCase('@tag!:value => where tag does not equal value', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -242,16 +234,16 @@ test.group('acceptance > handle: filter', (group) => {
     output: `
       filter: @duration!:30m
       ---
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
     `,
     stableOutput: true,
   })
   testCase('@tag:a..b => where tag between a and b', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -262,16 +254,16 @@ test.group('acceptance > handle: filter', (group) => {
     output: `
       filter: @duration:25m..1h
       ---
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 4 @id:4 @project:demo @duration:30m
     `,
     stableOutput: true,
   })
   testCase('@tag!:a..b => where tag is not between a and b', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
@@ -282,7 +274,7 @@ test.group('acceptance > handle: filter', (group) => {
     output: `
       filter: @duration!:25m..30m
       ---
-      Task 1 @id:1 @fun @duration:1h
+      Task 1 @id:1 @fun:true @duration:1h
       Task 3 @id:3 @project:other
     `,
     stableOutput: true,
@@ -365,21 +357,19 @@ test.group('acceptance > handle: filter', (group) => {
   })
 })
 
-test.group('acceptance > handle: apply', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: apply', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it applies a single tag to items on the input', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
         Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
     input: `
       apply: @project:foo
       ---
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
         Task 3 @id:3 @parent:2 @project:other
       Task 4 @id:4 @project:demo @duration:30m
       Task 5 is new
@@ -388,8 +378,8 @@ test.group('acceptance > handle: apply', (group) => {
     output: `
       apply: @project:foo
       ---
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m @project:foo
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m @project:foo
         Task 3 @id:3 @parent:2 @project:foo
       Task 4 @id:4 @project:foo @duration:30m
       Task 5 is new @id:5 @project:foo
@@ -398,15 +388,15 @@ test.group('acceptance > handle: apply', (group) => {
   })
   testCase('it applies multiple tags to items on the input', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
     input: `
       apply: @project:foo @duration:30m
       ---
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 5 is new
       Task 6 is also new @project:new
@@ -414,8 +404,8 @@ test.group('acceptance > handle: apply', (group) => {
     output: `
       apply: @project:foo @duration:30m
       ---
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:30m @project:foo
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:30m @project:foo
       Task 3 @id:3 @project:foo @duration:30m
       Task 4 @id:4 @project:demo @duration:30m
       Task 5 is new @id:5 @project:foo @duration:30m
@@ -424,21 +414,19 @@ test.group('acceptance > handle: apply', (group) => {
   })
 })
 
-test.group('acceptance > handle: defaults', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: defaults', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it adds default tags to items on the input', {
     data: `
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m
       Task 3 @id:3 @project:other
       Task 4 @id:4 @project:demo @duration:30m
     `,
     input: `
       defaults: @project:foo @duration:30m
       ---
-      Task 2 @id:2 @serious @duration:25m
+      Task 2 @id:2 @serious:true @duration:25m
         Task 3 @id:3 @project:other
       Task 5 is new
       Task 6 is also new @project:new
@@ -446,8 +434,8 @@ test.group('acceptance > handle: defaults', (group) => {
     output: `
       defaults: @project:foo @duration:30m
       ---
-      Task 1 @id:1 @fun @duration:1h
-      Task 2 @id:2 @serious @duration:25m @project:foo
+      Task 1 @id:1 @fun:true @duration:1h
+      Task 2 @id:2 @serious:true @duration:25m @project:foo
         Task 3 @id:3 @parent:2 @project:other @duration:30m
       Task 4 @id:4 @project:demo @duration:30m
       Task 5 is new @id:5 @project:foo @duration:30m
@@ -456,24 +444,22 @@ test.group('acceptance > handle: defaults', (group) => {
   })
 })
 
-test.group('acceptance > handle: group-by', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > handle: group-by', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it groups items by a single tag', {
     data: `
       Task 1 @id:1 @project:foo @duration:1h
       Task 2 @id:2 @project:bar @duration:25m
       Task 3 @id:3 @project:foo
       Task 4 @id:4 @project:demo @duration:30m
-      Task 5 @id:5 @temp
+      Task 5 @id:5 @temp:true
     `,
     input: `
-      groupBy: @project
+      groupBy: @project:asc
       ---
     `,
     output: `
-      groupBy: @project
+      groupBy: @project:asc
       ---
       bar:
         Task 2 @id:2 @project:bar @duration:25m
@@ -483,7 +469,7 @@ test.group('acceptance > handle: group-by', (group) => {
         Task 1 @id:1 @project:foo @duration:1h
         Task 3 @id:3 @project:foo
       [undefined]:
-        Task 5 @id:5 @temp
+        Task 5 @id:5 @temp:true
     `,
     stableOutput: true,
   })
@@ -510,7 +496,7 @@ test.group('acceptance > handle: group-by', (group) => {
         Task 1 @id:1 @project:foo @duration:1h
         Task 3 @id:3 @project:foo
       [undefined]:
-        Task 5 @id:5 @temp
+        Task 5 @id:5 @temp:true
     `,
     stableOutput: true,
   })
@@ -537,7 +523,7 @@ test.group('acceptance > handle: group-by', (group) => {
       bar:
         Task 2 @id:2 @project:bar @duration:25m
       [undefined]:
-        Task 5 @id:5 @temp
+        Task 5 @id:5 @temp:true
     `,
     stableOutput: true,
   })
@@ -573,7 +559,7 @@ test.group('acceptance > handle: group-by', (group) => {
         30m:
           Task 4 @id:4 @duration:30m
         [undefined]:
-          Task 5 @id:5 @temp
+          Task 5 @id:5 @temp:true
     `,
     stableOutput: true,
   })
@@ -587,7 +573,7 @@ test.group('acceptance > handle: group-by', (group) => {
       Task 5 @id:5 @temp
     `,
     input: `
-      groupBy: @project
+      groupBy: @project:asc
       ---
       bar:
         Task 2 @id:2 @project:bar @duration:25m
@@ -601,7 +587,7 @@ test.group('acceptance > handle: group-by', (group) => {
         Task 3 @id:3 @project:foo
     `,
     output: `
-      groupBy: @project
+      groupBy: @project:asc
       ---
       bar:
         Task 2 @id:2 @project:bar @duration:25m
@@ -609,7 +595,7 @@ test.group('acceptance > handle: group-by', (group) => {
         Task 4 @id:4 @project:bar @duration:30m
       foo:
         Task 1 @id:1 @project:foo @duration:1h
-        Task 5 @id:5 @temp @project:foo
+        Task 5 @id:5 @temp:true @project:foo
       [undefined]:
         Task 3 @id:3
     `,
@@ -618,12 +604,12 @@ test.group('acceptance > handle: group-by', (group) => {
 })
 
 function testCase(name: string, { data, input, output, stableOutput }: TestCase) {
-  return test(name, async ({ expect }) => {
+  test(name, async () => {
     const handler = createHandler({ dbPath })
-    const dbItems = await handler.db.createDbItems(parse(unindent(data).trim()))
+    const dbItems = await handler.db.createDbItems(parse(dedent(data)))
     await handler.db.save(dbItems)
-    input = unindent(input).trim()
-    output = unindent(output).trim()
+    input = dedent(input)
+    output = dedent(output)
     expect(stringify(await handler.handle(parse(input)))).toBe(output)
     if (stableOutput) {
       expect(stringify(await handler.handle(parse(output)))).toBe(output)

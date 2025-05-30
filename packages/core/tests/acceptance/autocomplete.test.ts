@@ -1,7 +1,6 @@
-import fs from 'fs/promises'
-import { test } from '@japa/runner'
+import dedent from 'dedent'
+import { afterEach, describe, expect, test } from 'bun:test'
 import { parse } from '@hadaf/syntax'
-import { unindent } from './utils.js'
 import { createHandler } from '../../src/index.js'
 
 type TestCase = {
@@ -18,10 +17,8 @@ const data = `
     Subtask 2 @id:4 @parent:2 @project:bar.baz @est:1h15m
 `
 
-test.group('acceptance > autocomplete: when the database is empty', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete: when the database is empty', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it autocompletes operations', {
     data: '',
     text: '',
@@ -39,10 +36,8 @@ test.group('acceptance > autocomplete: when the database is empty', (group) => {
   })
 })
 
-test.group('acceptance > autocomplete: when there is data on the database', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete: when there is data on the database', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('it autocompletes operations', {
     data,
     text: '',
@@ -65,10 +60,8 @@ test.group('acceptance > autocomplete: when there is data on the database', (gro
   })
 })
 
-test.group('acceptance > autocomplete > apply operation', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete > apply operation', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('suggests tags after space', {
     data,
     text: 'apply: ',
@@ -91,10 +84,8 @@ test.group('acceptance > autocomplete > apply operation', (group) => {
   })
 })
 
-test.group('acceptance > autocomplete > defaults operation', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete > defaults operation', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('suggests tags after space', {
     data,
     text: 'defaults: ',
@@ -117,10 +108,8 @@ test.group('acceptance > autocomplete > defaults operation', (group) => {
   })
 })
 
-test.group('acceptance > autocomplete > filter operation', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete > filter operation', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('suggests tags after space', {
     data,
     text: 'filter: ',
@@ -148,10 +137,8 @@ test.group('acceptance > autocomplete > filter operation', (group) => {
   })
 })
 
-test.group('acceptance > autocomplete > groupBy operation', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete > groupBy operation', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('suggests tags after space', {
     data,
     text: 'groupBy: ',
@@ -174,10 +161,8 @@ test.group('acceptance > autocomplete > groupBy operation', (group) => {
   })
 })
 
-test.group('acceptance > autocomplete > sort operation', (group) => {
-  group.each.setup(() => {
-    return () => fs.unlink(dbPath)
-  })
+describe('acceptance > autocomplete > sort operation', () => {
+  afterEach(() => Bun.file(dbPath).delete())
   testCase('suggests tags after space', {
     data,
     text: 'sort: ',
@@ -201,9 +186,9 @@ test.group('acceptance > autocomplete > sort operation', (group) => {
 })
 
 function testCase(name: string, { data, text, suggestions }: TestCase) {
-  return test(name, async ({ expect }) => {
+  return test(name, async () => {
     const handler = createHandler({ dbPath })
-    const dbItems = await handler.db.createDbItems(parse(unindent(data).trim()))
+    const dbItems = await handler.db.createDbItems(parse(dedent(data)))
     await handler.db.save(dbItems)
     const res = await handler.autocomplete(text)
     res.sort()

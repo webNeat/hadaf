@@ -121,7 +121,7 @@ function toItem(item: DbItem): Item {
   for (const name of item.tagsNames) {
     tags.push({ name, ...item.tagsData[name] })
   }
-  return { title, text, tags, items }
+  return { title, text, description: '', tags, items }
 }
 
 function toDbItems(db: Data, item: Item, parentId = 0): DbItem[] {

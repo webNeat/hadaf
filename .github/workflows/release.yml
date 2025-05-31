@@ -14,8 +14,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
+      - run: bun run changeset status --since=origin/main --output=changeset.json
+      - run: jq -e '.releases|length>0' changeset.json
+        id: has_releases
+        continue-on-error: true
+      - name: Create release PR / publish to npm
+        if: steps.has_releases.outcome == 'success'
         uses: changesets/action@v1
         with:
           publish: bun run changeset publish
@@ -32,10 +36,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install
-      - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1
-        with:
-          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
-          packagePath: extensions/vscode
-          registryUrl: https://marketplace.visualstudio.com
-          skipDuplicate: true
+      - run: bun run --filter "./packages/*" build
+      - name: Publish to VS Marketplace
+        working-directory: extensions/vscode
+        run: bunx @vscode/vsce publish --pat "$VS_MARKETPLACE_TOKEN" --skip-duplicate --no-dependencies
+        env:
+          VS_MARKETPLACE_TOKEN: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+      - name: Publish to Open VSX
+        working-directory: extensions/vscode
+        run: bunx ovsx publish -p "$OPEN_VSX_TOKEN" --skip-duplicate --no-dependencies
+        env:
+          OPEN_VSX_TOKEN: ${{ secrets.OPEN_VSX_TOKEN }}

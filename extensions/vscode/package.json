@@ -5,7 +5,7 @@
   "version": "0.0.4",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "test": "echo \"No tests implemented yet\"",
     "vscode:prepublish": "bun run build"
   },
@@ -39,8 +39,7 @@
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
-    "@types/vscode": "^1.80.0",
-    "vsce": "^2.15.0"
+    "@types/vscode": "^1.80.0"
   },
   "publisher": "webneat",
   "engines": {
@@ -61,6 +60,25 @@
     "access": "public"
   },
   "activationEvents": [],
+  "tsup": {
+    "entry": [
+      "src/**/*.ts"
+    ],
+    "format": [
+      "cjs"
+    ],
+    "dts": true,
+    "bundle": true,
+    "external": [
+      "vscode"
+    ],
+    "noExternal": [
+      "@hadaf/core",
+      "@hadaf/syntax"
+    ],
+    "outDir": "dist",
+    "clean": true
+  },
   "prettier": {
     "semi": false,
     "tabWidth": 2,

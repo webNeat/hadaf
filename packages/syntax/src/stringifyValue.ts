@@ -12,7 +12,7 @@ export function stringifyValue(x: TagData): string {
 }
 
 function boolean(value: boolean) {
-  return value ? '' : 'false'
+  return value ? 'true' : 'false'
 }
 
 function number(value: number) {

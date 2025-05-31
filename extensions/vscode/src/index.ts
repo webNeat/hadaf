@@ -1,6 +1,6 @@
 import * as path from 'path'
-import { writeFile, mkdir } from 'fs/promises'
 import * as vscode from 'vscode'
+import { writeFile, mkdir } from 'fs/promises'
 import { createHandler } from '@hadaf/core'
 import { parse, stringify } from '@hadaf/syntax'
 
@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     ':',
-    '@'
+    '@',
   )
 }
 

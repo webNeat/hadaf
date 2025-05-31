@@ -1,8 +1,18 @@
 {
-  "name": "hadaf",
+  "name": "@hadaf/monorepo",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+    "packages/*",
+    "extensions/*"
+  ],
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.4",
+    "@total-typescript/tsconfig": "^1.0.4",
+    "@types/bun": "^1.2.15",
+    "dedent": "^1.6.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
 }

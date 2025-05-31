@@ -5,6 +5,7 @@ export type Item = {
   text: string
   tags: Tag[]
   items: Item[]
+  description: string
 }
 
 export type Tag = TagData & { name: string }

@@ -62,7 +62,7 @@ function getGoupedItems(groups: Groups, directions: Array<SortDirection>): Item[
   const items = [] as Item[]
   for (const title in groups) {
     const group = groups[title]
-    items.push({ title, text: '', tags: [], items: Array.isArray(group) ? group : getGoupedItems(group, directions.slice(1)) })
+    items.push({ title, text: '', description: '', tags: [], items: Array.isArray(group) ? group : getGoupedItems(group, directions.slice(1)) })
   }
   items.sort((a, b) => {
     if (a.title === missingValue) return 1

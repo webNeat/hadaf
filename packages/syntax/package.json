@@ -4,13 +4,19 @@
   "version": "0.0.3",
   "license": "MIT",
   "type": "module",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
@@ -20,17 +26,32 @@
     "access": "public"
   },
   "scripts": {
-    "build": "bash ./build.sh",
-    "prepublish": "npm run build",
-    "test": "node --import tsx --enable-source-maps tests/run.ts"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "bun test",
+    "build": "tsup",
+    "prepublish": "bun run build"
   },
-  "devDependencies": {
-    "@japa/expect": "^3.0.0-1",
-    "@japa/expect-type": "^2.0.0-1",
-    "@japa/runner": "^3.0.0-9",
-    "@types/node": "^20.11.29",
-    "prettier": "^3.2.5",
-    "tsx": "^4.7.1",
-    "typescript": "^5.4.2"
+  "tsup": {
+    "entry": [
+      "src/**/*.ts"
+    ],
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "dts": true,
+    "bundle": false,
+    "skipNodeModulesBundle": true,
+    "outDir": "dist",
+    "clean": true
+  },
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "useTabs": false,
+    "printWidth": 155,
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }

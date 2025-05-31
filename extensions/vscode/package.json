@@ -3,26 +3,13 @@
   "displayName": "Hadaf",
   "description": "A task management tool to acheive your goals",
   "version": "0.0.3",
-  "publisher": "webneat",
-  "engines": {
-    "vscode": "^1.80.0"
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"No tests implemented yet\"",
+    "vscode:prepublish": "bun run build"
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/webNeat/hadaf.git"
-  },
-  "bugs": {
-    "url": "https://github.com/webNeat/hadaf/issues"
-  },
-  "categories": [
-    "Other"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/index.js",
   "contributes": {
     "languages": [
       {
@@ -46,23 +33,40 @@
     ],
     "commands": []
   },
-  "scripts": {
-    "vscode:prepublish": "npm run build",
-    "build": "tsc",
-    "watch": "tsc -watch",
-    "pretest": "npm run build",
-    "test": "echo 'No tests yet!'"
-  },
   "dependencies": {
-    "@hadaf/core": "^0.0.3",
-    "@hadaf/syntax": "^0.0.3",
+    "@hadaf/core": "workspace:*",
+    "@hadaf/syntax": "workspace:*",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.4.1",
     "@types/vscode": "^1.80.0",
-    "prettier": "^3.0.0",
-    "typescript": "^5.1.6",
     "vsce": "^2.15.0"
+  },
+  "publisher": "webneat",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webNeat/hadaf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webNeat/hadaf/issues"
+  },
+  "categories": [
+    "Other"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "activationEvents": [],
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "useTabs": false,
+    "printWidth": 155,
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }

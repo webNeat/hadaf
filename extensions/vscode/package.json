@@ -2,7 +2,7 @@
   "name": "hadaf-vscode",
   "displayName": "Hadaf",
   "description": "A task management tool to acheive your goals",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "build": "tsc",
